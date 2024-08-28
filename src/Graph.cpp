@@ -1,6 +1,10 @@
 #include "Graph.hpp"
 #include <limits>
 #include <queue>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+#include <functional>
 
 // Edge constructor implementation
 Edge::Edge(char dest, double wt) : destination(dest), weight(wt) {}
@@ -94,9 +98,124 @@ Graph Graph::primMST(char startVertex)
     return mstTree;
 }
 
+/*
+1. Check if the new edge forms a cycle in the MST.
+   If it doesn't, the edge can be added without affecting the MST.
+
+2. If the new edge does form a cycle, then check if the new edge has a smaller weight than any other edge in the cycle.
+   If it does, replace the heaviest edge in the cycle with the new edge to maintain the minimum spanning tree property.
+
+*/
+
+// DFS-based helper function for cycle detection
+std::vector<std::pair<char, char>> Graph::findCycleInMST(char startVertex)
+{
+    std::unordered_map<char, char> parent;
+    std::unordered_map<char, bool> visited;
+    std::vector<std::pair<char, char>> cycleEdges;
+
+    std::function<bool(char, char)> dfs = [&](char vertex, char parentVertex) -> bool
+    {
+        visited[vertex] = true;
+        parent[vertex] = parentVertex;
+
+        for (const Edge &edge : vertices[vertex].adjacencyList)
+        {
+            if (!visited[edge.destination])
+            {
+                if (dfs(edge.destination, vertex))
+                {
+                    if (cycleEdges.empty() || edge.destination != startVertex)
+                    {
+                        cycleEdges.push_back({vertex, edge.destination});
+                    }
+                    return true;
+                }
+            }
+            else if (edge.destination != parentVertex)
+            {
+                startVertex = edge.destination;
+                cycleEdges.push_back({vertex, edge.destination});
+                return true;
+            }
+        }
+        return false;
+    };
+
+    visited.clear();
+    dfs(startVertex, '\0');
+
+    return cycleEdges;
+}
+
+void Graph::removeEdge(char src, char dest)
+{
+    // Lambda function to find the edge to remove
+    auto removeEdgeFromList = [dest](const Edge &edge)
+    { return edge.destination == dest; };
+
+    // Remove edge from src to dest
+    vertices[src].adjacencyList.erase(
+        std::remove_if(vertices[src].adjacencyList.begin(), vertices[src].adjacencyList.end(), removeEdgeFromList),
+        vertices[src].adjacencyList.end());
+
+    // Remove edge from dest to src
+    vertices[dest].adjacencyList.erase(
+        std::remove_if(vertices[dest].adjacencyList.begin(), vertices[dest].adjacencyList.end(), removeEdgeFromList),
+        vertices[dest].adjacencyList.end());
+}
+
 void Graph::addEdgePrim(char src, char dest, double weight)
 {
+    addEdge(src, dest, weight);
 
-    vertices[src].adjacencyList.push_back(Edge(dest, weight));
-    vertices[dest].adjacencyList.push_back(Edge(src, weight));
+    // Detect the cycle using DFS
+
+    std::vector<std::pair<char, char>> cycleEdges = findCycleInMST(src);
+
+    // If no cycle was detected, no update is needed
+    if (cycleEdges.empty())
+        return;
+
+    // If no cycle was detected, no update is needed
+    if (cycleEdges.empty())
+        return;
+
+    // Identify the heaviest edge in the cycle
+    std::pair<char, char> maxEdge;
+    double maxWeight = -1.0;
+
+    for (const auto &edgePair : cycleEdges)
+    {
+        char u = edgePair.first;
+        char v = edgePair.second;
+        double w = 0.0;
+
+        // Find the corresponding edge weight
+        for (const Edge &edge : vertices[u].adjacencyList)
+        {
+            if (edge.destination == v)
+            {
+                w = edge.weight;
+                break;
+            }
+        }
+
+        if (w > maxWeight)
+        {
+            maxWeight = w;
+            maxEdge = edgePair;
+        }
+    }
+
+    // If the new edge is lighter, remove the heaviest edge in the cycle
+    if (weight < maxWeight)
+    {
+        removeEdge(maxEdge.first, maxEdge.second);
+    }
+    else
+    {
+        // If the new edge is not lighter, remove it from the MST
+        removeEdge(src, dest);
+    }
 }

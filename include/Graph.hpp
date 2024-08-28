@@ -31,8 +31,10 @@ class Graph
 {
 private:
     std::unordered_map<int, Vertex> vertices;
+    std::vector<std::pair<char, char>> findCycleInMST(char startVertex);
 
 public:
+    void removeEdge(char src, char dest);
     void addVertex(char id, double weight);
     void addEdge(char src, char dest, double weight);
     void displayGraph();

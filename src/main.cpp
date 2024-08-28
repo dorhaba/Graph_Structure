@@ -1,63 +1,77 @@
 #include "Graph.hpp"
 
+// 322876533 עידו שמרלינג
+// 211678818 דור חבסוב
+
 int main()
 {
+    Graph graph;
 
-    // srand(static_cast<unsigned>(time(0)));
+    // Add 20 vertices labeled from 'A' to 'T'
+    for (char id = 'A'; id <= 'T'; ++id)
+    {
+        graph.addVertex(id, 0.0);
+    }
 
-    // Graph g;
-
-    // for (char c = 'A'; c < 'A' + 20; ++c)
-    // {
-    //     g.addVertex(c, rand() % 10 + 1);
-    // }
-
-    // for (int i = 0; i < 50; ++i)
-    // {
-    //     char src = 'A' + rand() % 20;
-    //     char dest = 'A' + rand() % 20;
-    //     while (dest == src)
-    //     {
-    //         dest = 'A' + rand() % 20;
-    //     }
-    //     double weight = rand() % 20 + 1;
-    //     g.addEdge(src, dest, weight);
-    // }
-
-    Graph g;
-
-    // Add vertices
-    g.addVertex('a', 0.0);
-    g.addVertex('b', 0.0);
-    g.addVertex('c', 0.0);
-    g.addVertex('d', 0.0);
-    g.addVertex('e', 0.0);
-    g.addVertex('f', 0.0);
-
-    // Add edges
-    g.addEdge('a', 'd', -10.0);
-    g.addEdge('a', 'b', 10.0);
-    g.addEdge('b', 'd', 30.0);
-    g.addEdge('d', 'c', 40.0);
-    g.addEdge('d', 'e', 20.0);
-    g.addEdge('b', 'c', -30.0);
-    g.addEdge('c', 'e', 10.0);
-    g.addEdge('c', 'f', 20.0);
-    g.addEdge('b', 'f', 20.0);
-    g.addEdge('e', 'f', 0.0);
+    // Add 50 edges with predefined weights
+    graph.addEdge('A', 'B', 5);
+    graph.addEdge('A', 'C', 30);
+    graph.addEdge('A', 'D', 18);
+    graph.addEdge('B', 'C', 7);
+    graph.addEdge('B', 'E', -2);
+    graph.addEdge('C', 'F', 6);
+    graph.addEdge('D', 'G', -4);
+    graph.addEdge('E', 'F', 15);
+    graph.addEdge('E', 'H', 9);
+    graph.addEdge('F', 'I', 22);
+    graph.addEdge('G', 'J', 52);
+    graph.addEdge('H', 'I', 7);
+    graph.addEdge('I', 'K', 14);
+    graph.addEdge('J', 'L', 3);
+    graph.addEdge('K', 'M', 8);
+    graph.addEdge('L', 'N', 6);
+    graph.addEdge('M', 'O', 2);
+    graph.addEdge('N', 'P', 9);
+    graph.addEdge('O', 'Q', 4);
+    graph.addEdge('P', 'R', 7);
+    graph.addEdge('Q', 'S', -5);
+    graph.addEdge('R', 'T', 1);
+    graph.addEdge('S', 'T', 3);
+    graph.addEdge('A', 'E', 2);
+    graph.addEdge('B', 'F', 64);
+    graph.addEdge('C', 'G', -5);
+    graph.addEdge('D', 'H', -8);
+    graph.addEdge('E', 'I', 4);
+    graph.addEdge('F', 'J', -3);
+    graph.addEdge('G', 'K', 7);
+    graph.addEdge('H', 'L', 90);
+    graph.addEdge('I', 'M', 1);
+    graph.addEdge('J', 'N', -6);
+    graph.addEdge('K', 'O', -5);
+    graph.addEdge('L', 'P', -8);
+    graph.addEdge('M', 'Q', 3);
+    graph.addEdge('N', 'R', 7);
+    graph.addEdge('O', 'S', -4);
+    graph.addEdge('P', 'T', 2);
+    graph.addEdge('Q', 'A', -9);
+    graph.addEdge('R', 'B', 6);
+    graph.addEdge('S', 'C', 4);
+    graph.addEdge('T', 'D', 7);
+    graph.addEdge('A', 'F', 3);
+    graph.addEdge('B', 'G', 8);
 
     std::cout << "Display Graph" << std::endl;
-    g.displayGraph();
+    graph.displayGraph();
 
     // Get the MST as a tree
-    Graph mstTree = g.primMST('a');
+    Graph mstTree = graph.primMST('A');
 
     std::cout << std::endl;
     std::cout << "Display mstTree" << std::endl;
     // Display the MST tree
     mstTree.displayGraph();
 
-    mstTree.addEdge('b', 'e', -40.0);
+    mstTree.addEdgePrim('P', 'Q', -40.0);
 
     // Display the MST tree after adding edge
     std::cout << std::endl;
