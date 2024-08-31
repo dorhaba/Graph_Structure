@@ -87,11 +87,20 @@ Graph Graph::primMST(char startVertex)
     for (const auto &vertexPair : vertices)
     {
         char v = vertexPair.first;
-
         if (parent[v] != '\0')
         {
             mstTree.addVertex(v, vertices[v].weight); // Add vertices to the new graph
-            mstTree.addEdge(parent[v], v, key[v]);    // Add edges to the new graph
+        }
+    }
+
+    // Construct the tree from the parent array
+    for (const auto &vertexPair : vertices)
+    {
+        char v = vertexPair.first;
+
+        if (parent[v] != '\0')
+        {
+            mstTree.addEdge(v, parent[v], key[v]); // Add edges to the new graph
         }
     }
 
@@ -143,6 +152,7 @@ std::vector<std::pair<char, char>> Graph::findCycleInMST(char startVertex)
     };
 
     visited.clear();
+
     dfs(startVertex, '\0');
 
     return cycleEdges;
@@ -151,8 +161,8 @@ std::vector<std::pair<char, char>> Graph::findCycleInMST(char startVertex)
 void Graph::removeEdge(char src, char dest)
 {
     // Lambda function to find the edge to remove
-    auto removeEdgeFromList = [dest](const Edge &edge)
-    { return edge.destination == dest; };
+    auto removeEdgeFromList = [dest, src](const Edge &edge)
+    { return edge.destination == dest || edge.destination == src; };
 
     // Remove edge from src to dest
     vertices[src].adjacencyList.erase(
@@ -172,10 +182,6 @@ void Graph::addEdgePrim(char src, char dest, double weight)
     // Detect the cycle using DFS
 
     std::vector<std::pair<char, char>> cycleEdges = findCycleInMST(src);
-
-    // If no cycle was detected, no update is needed
-    if (cycleEdges.empty())
-        return;
 
     // If no cycle was detected, no update is needed
     if (cycleEdges.empty())
@@ -211,6 +217,7 @@ void Graph::addEdgePrim(char src, char dest, double weight)
     // If the new edge is lighter, remove the heaviest edge in the cycle
     if (weight < maxWeight)
     {
+
         removeEdge(maxEdge.first, maxEdge.second);
     }
     else

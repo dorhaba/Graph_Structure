@@ -1,6 +1,6 @@
 #include "Graph.hpp"
 
-// 322876533 עידו שמרלינג
+// 322876533 עידו צבי שמרלינג
 // 211678818 דור חבסוב
 
 int main()
@@ -67,15 +67,22 @@ int main()
     Graph mstTree = graph.primMST('A');
 
     std::cout << std::endl;
-    std::cout << "Display mstTree" << std::endl;
+    std::cout << "Display mstTree after Prim" << std::endl;
     // Display the MST tree
     mstTree.displayGraph();
 
-    mstTree.addEdgePrim('P', 'Q', -40.0);
+    mstTree.addEdgePrim('D', 'E', 1000);
 
-    // Display the MST tree after adding edge
     std::cout << std::endl;
-    std::cout << "Display mstTree after adding edge" << std::endl;
+    std::cout << "Display mstTree after adding addEdgePrim('D', 'E', 1000) " << std::endl;
+    // Display the MST tree
+    mstTree.displayGraph();
+
+    mstTree.addEdgePrim('D', 'E', -40.0);
+
+    // Display the MST tree after adding addEdgePrim
+    std::cout << std::endl;
+    std::cout << "Display mstTree after adding addEdgePrim('D', 'E', -40.0)" << std::endl;
 
     mstTree.displayGraph();
 
